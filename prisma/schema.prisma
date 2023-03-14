@@ -6,3 +6,47 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model SchoolYear {
+  start_year Int      @id
+  classes    Class[]
+  courses    Course[]
+}
+
+model Class {
+  id             Int    @id @default(autoincrement())
+  name           String
+  school_year_id Int
+
+  school_year SchoolYear @relation(fields: [school_year_id], references: [start_year])
+
+  students Student[]
+}
+
+model Student {
+  id       Int @id @default(autoincrement())
+  class_id Int
+
+  class Class @relation(fields: [class_id], references: [id])
+
+  inscriptions Inscriptions[]
+}
+
+model Course {
+  id             Int    @id @default(autoincrement())
+  name           String
+  school_year_id Int
+
+  school_year  SchoolYear     @relation(fields: [school_year_id], references: [start_year])
+  inscriptions Inscriptions[]
+}
+
+model Inscriptions {
+  student_id Int
+  course_id  Int
+
+  student Student @relation(fields: [student_id], references: [id])
+  course  Course  @relation(fields: [course_id], references: [id])
+
+  @@id([student_id, course_id])
+}
