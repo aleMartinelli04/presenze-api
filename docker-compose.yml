@@ -1,0 +1,26 @@
+version: "3"
+
+volumes:
+  postgres_data: { }
+
+services:
+  api:
+    container_name: "presenze-api"
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    volumes:
+      - ./:/usr/src/app
+  db:
+    container_name: "presenze-postgres"
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db_presenze
