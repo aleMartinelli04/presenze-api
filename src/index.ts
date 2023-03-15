@@ -1,27 +1,19 @@
-import fastify from 'fastify'
+import express, {Express} from "express";
 
 const port = 3000;
 
-const startServer = async () => {
+const server: Express = express();
+
+async function main() {
     try {
-        const server = fastify({
-            logger: true,
+        await server.listen(port, () => {
+            console.log(`Server running on port ${port}`);
         });
 
-        server.setErrorHandler((error, _, __) => {
-            server.log.error(error);
-        })
-
-        server.get('/', (request, reply) => {
-            reply.send({name: 'fastify-typescript'});
-        })
-
-        await server.listen({port: port, host: '0.0.0.0'});
-    } catch (e) {
-        console.error(e)
+    } catch (err) {
+        console.error(err);
+        process.exit(1);
     }
 }
 
-startServer().then(() => {
-    console.log(`Server started on port ${port}`);
-});
+main();
