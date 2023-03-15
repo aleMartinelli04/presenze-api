@@ -8,9 +8,10 @@ datasource db {
 }
 
 model SchoolYear {
-  start_year Int      @id
-  classes    Class[]
-  courses    Course[]
+  start_year Int @id
+
+  classes Class[]
+  courses Course[]
 }
 
 model Class {
@@ -37,7 +38,8 @@ model Course {
   name           String
   school_year_id Int
 
-  school_year  SchoolYear     @relation(fields: [school_year_id], references: [start_year])
+  school_year SchoolYear @relation(fields: [school_year_id], references: [start_year])
+
   inscriptions Inscriptions[]
 }
 
