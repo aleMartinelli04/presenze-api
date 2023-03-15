@@ -63,3 +63,26 @@ export const createSchoolYear = async (req: Request<{ start_year: number }>, res
 
     res.status(200).json(schoolYear);
 }
+
+export const deleteSchoolYear = async (req: Request<{ start_year: number }>, res: Response) => {
+    const startYear = req.params.start_year;
+
+    const schoolYearExists: SchoolYear | null = await prisma.schoolYear.findUnique({
+        where: {
+            start_year: startYear
+        }
+    });
+
+    if (!schoolYearExists) {
+        res.status(404).json({message: "School year not found"});
+        return;
+    }
+
+    await prisma.schoolYear.delete({
+        where: {
+            start_year: startYear
+        }
+    });
+
+    res.status(200).json({message: "School year deleted"});
+}
