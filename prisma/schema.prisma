@@ -25,7 +25,9 @@ model Class {
 }
 
 model Student {
-  id       Int @id @default(autoincrement())
+  id       Int    @id @default(autoincrement())
+  name     String
+  surname  String
   class_id Int
 
   class Class @relation(fields: [class_id], references: [id])
