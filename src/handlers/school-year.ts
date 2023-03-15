@@ -6,6 +6,11 @@ import {CreateError, GetByIdError} from "../types/errors.js";
 export const getByStartYear = async (req: Request<{ start_year: number }>, res: Response<SchoolYear | GetByIdError>) => {
     const startYear = req.params.start_year as unknown as string;
 
+    if (isNaN(parseInt(startYear))) {
+        res.status(400).json({message: "Invalid start year"});
+        return;
+    }
+
     try {
         let schoolYear: SchoolYear = await prisma.schoolYear.findUniqueOrThrow({
             where: {
@@ -28,6 +33,11 @@ export const getAllSchoolYears = async (req: Request, res: Response<SchoolYear[]
 
 export const createSchoolYear = async (req: Request<{ start_year: number }>, res: Response<SchoolYear | CreateError>) => {
     const startYear = req.body.start_year;
+
+    if (isNaN(startYear)) {
+        res.status(400).json({message: "Invalid start year"});
+        return;
+    }
 
     const schoolYearExists: SchoolYear | null = await prisma.schoolYear.findUnique({
         where: {

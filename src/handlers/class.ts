@@ -23,11 +23,17 @@ export const getClassesForYear = async (req: Request<{ school_year: number }>, r
 
 export const createClass = async (req: Request<{ school_year: number }>, res: Response<Class | CreateError>) => {
     const schoolYear = req.params.school_year as unknown as string;
+    const className = req.body.name;
+
+    if (!className || className.length < 1) {
+        res.status(400).json({message: "Invalid class name"});
+        return;
+    }
 
     try {
         const newClass: Class = await prisma.class.create({
             data: {
-                name: req.body.name,
+                name: className,
                 school_year_id: parseInt(schoolYear)
             }
         });
