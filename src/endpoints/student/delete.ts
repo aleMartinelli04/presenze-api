@@ -13,7 +13,7 @@ export default class DeleteStudentEndpoint extends Endpoint {
     ];
 
     protected async _delete(req: Request, res: Response<Student | Message>): Promise<any> {
-        const id = parseInt(req.params.id);
+        const id = parseInt(req.body.id);
 
         const student = await prisma.student.findUnique({
             where: {
