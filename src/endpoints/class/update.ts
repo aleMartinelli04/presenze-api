@@ -13,9 +13,9 @@ export default class EditClassEndpoint extends Endpoint {
         body('name').isString()
     ];
 
-    protected async _post(req: Request, res: Response<Class | Message>): Promise<any> {
+    protected async _put(req: Request, res: Response<Class | Message>): Promise<any> {
         const id = parseInt(req.params.id);
-        const name = req.params.name;
+        const name = req.body.name;
 
         const classFound = await prisma.class.findUnique({
             where: {
