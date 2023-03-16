@@ -1,26 +1,38 @@
-import express, {Express} from "express";
-import schoolYearRouter from "./routers/school-year.js";
-import classRouter from "./routers/class.js";
+import express from "express";
+import {fileURLToPath} from "url";
+import {dirname, join} from "path";
+import {glob} from "glob";
 
 const port = 3000;
 
-const server: Express = express();
+const server = express();
 
 server.use(express.json());
 
-server.use("/school-year", schoolYearRouter);
-server.use("/class", classRouter);
-
 async function main() {
-    try {
-        await server.listen(port, () => {
-            console.log(`Server running on port ${port}`);
-        });
+    const path = join(dirname(fileURLToPath(import.meta.url)), "endpoints");
+    let registered = 0;
 
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
+    for (const file of await glob(path + "/**/*.js")) {
+        if (!file.endsWith(".js")) {
+            continue;
+        }
+
+        const d = await import(file);
+
+        if (d.default) {
+            const endpoint = new d.default(server);
+            await endpoint.register();
+
+            registered += 1;
+        }
     }
+
+    console.log("Registered " + registered + " endpoints!");
+
+    server.listen(port, () => {
+        console.log("API listening on port " + port);
+    });
 }
 
 main();
