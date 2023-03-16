@@ -1,30 +1,36 @@
 import {Endpoint} from "../endpoint.js";
-import {param} from "express-validator";
-import prisma from "../../db/db.js";
+import {body} from "express-validator";
 import {SchoolYear} from "@prisma/client";
 import {Request, Response} from "express";
 import {Message} from "../../types/errors.js";
+import prisma from "../../db/db.js";
 
 export default class DeleteSchoolYearEndpoint extends Endpoint {
-    readonly path: string = "/school-year/delete/:id";
+    readonly path: string = "/school-year/delete";
     readonly validators: any[] = [
-        param('id').isInt({min: 1})
+        body('start_year').isInt({min: 2000})
     ];
 
     protected async _delete(req: Request, res: Response<SchoolYear | Message>): Promise<any> {
-        try {
-            const start_year = parseInt(req.params.id);
+        const startYear = parseInt(req.body.start_year);
 
-            let schoolYear: SchoolYear = await prisma.schoolYear.delete({
-                where: {
-                    start_year: start_year
-                }
-            });
+        const schoolYear = await prisma.schoolYear.findUnique({
+            where: {
+                start_year: startYear
+            }
+        });
 
-            res.json(schoolYear);
-
-        } catch (e) {
-            res.json({message: "Could not delete school year"});
+        if (!schoolYear) {
+            await res.status(404).json({message: "School year not found"});
+            return;
         }
+
+        await prisma.schoolYear.delete({
+            where: {
+                start_year: startYear
+            }
+        });
+
+        await res.json(schoolYear);
     }
 }
