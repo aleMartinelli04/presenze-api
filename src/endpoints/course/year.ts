@@ -6,7 +6,7 @@ import {Course} from "@prisma/client";
 import {Message} from "../../types/errors.js";
 
 export default class GetCoursesByYearEndpoint extends Endpoint {
-    readonly path = "/course/year/:year";
+    readonly path = "/courses/year/:year";
 
     readonly validators = [
         param('year').isInt()
