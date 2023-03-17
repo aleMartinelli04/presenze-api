@@ -4,7 +4,7 @@ import {Class} from "@prisma/client";
 import prisma from "../../db/db.js";
 
 export default class ListClassEndpoint extends Endpoint {
-    readonly path = "/class/all";
+    readonly path = "/classes";
 
     readonly validators = [];
 

@@ -6,7 +6,7 @@ import {Class} from "@prisma/client";
 import prisma from "../../db/db.js";
 
 export default class GetClassEndpoint extends Endpoint {
-    readonly path = "/class/get/:id";
+    readonly path = "/class/:id";
 
     readonly validators = [
         param('id').isInt()

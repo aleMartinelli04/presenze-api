@@ -1,19 +1,19 @@
 import {Endpoint} from "../endpoint.js";
-import {body} from "express-validator";
+import {param} from "express-validator";
 import {Request, Response} from "express";
 import {Class} from "@prisma/client";
 import {Message} from "../../types/errors.js";
 import prisma from "../../db/db.js";
 
 export default class DeleteClassEndpoint extends Endpoint {
-    readonly path = "/class/delete";
+    readonly path = "/class/:id/delete";
 
     readonly validators = [
-        body('id').isInt()
+        param('id').isInt()
     ];
 
     protected async _delete(req: Request, res: Response<Class | Message>): Promise<any> {
-        const id = parseInt(req.body.id);
+        const id = parseInt(req.params.id);
 
         const foundClass = await prisma.class.findUnique({
             where: {

@@ -6,7 +6,7 @@ import {Class} from "@prisma/client";
 import {Message} from "../../types/errors.js";
 
 export default class EditClassEndpoint extends Endpoint {
-    readonly path = "/class/update/:id";
+    readonly path = "/class/:id/update";
 
     readonly validators = [
         param('id').isInt(),
