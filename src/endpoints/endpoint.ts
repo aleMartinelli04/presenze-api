@@ -11,10 +11,21 @@ export abstract class Endpoint {
     }
 
     public async register() {
-        this.express.get(this.path, ...this.validators, validateMiddleware(), this._get.bind(this));
-        this.express.post(this.path, ...this.validators, validateMiddleware(), this._post.bind(this));
-        this.express.put(this.path, ...this.validators, validateMiddleware(), this._put.bind(this));
-        this.express.delete(this.path, ...this.validators, validateMiddleware(), this._delete.bind(this));
+        if (this._get !== Endpoint.prototype._get) {
+            this.express.get(this.path, ...this.validators, validateMiddleware(), this._get.bind(this));
+        }
+
+        if (this._post !== Endpoint.prototype._post) {
+            this.express.post(this.path, ...this.validators, validateMiddleware(), this._post.bind(this));
+        }
+
+        if (this._put !== Endpoint.prototype._put) {
+            this.express.put(this.path, ...this.validators, validateMiddleware(), this._put.bind(this));
+        }
+
+        if (this._delete !== Endpoint.prototype._delete) {
+            this.express.delete(this.path, ...this.validators, validateMiddleware(), this._delete.bind(this));
+        }
     }
 
     protected async _get(req: Request, res: Response): Promise<any> {
