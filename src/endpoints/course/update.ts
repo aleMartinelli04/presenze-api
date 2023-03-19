@@ -20,8 +20,6 @@ export default class UpdateCourseEndpoint extends Endpoint {
         const name = req.body.name;
         const schoolYearId = req.body.school_year;
 
-        console.log(schoolYearId, typeof schoolYearId);
-
         const course = await prisma.course.findUnique({
             where: {
                 id: courseId

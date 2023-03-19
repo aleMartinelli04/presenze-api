@@ -4,7 +4,7 @@ import {Student} from "@prisma/client";
 import prisma from "../../db/db.js";
 
 export default class GetAllStudentsEndpoint extends Endpoint {
-    readonly path = "/student/all";
+    readonly path = "/students";
 
     readonly validators = [];
 

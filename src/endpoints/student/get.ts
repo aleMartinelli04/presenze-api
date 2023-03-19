@@ -6,7 +6,7 @@ import {param} from "express-validator";
 import {Message} from "../../types/errors.js";
 
 export default class GetStudentByIdEndpoint extends Endpoint {
-    readonly path = "/student/get/:id";
+    readonly path = "/student/:id";
 
     readonly validators = [
         param('id').isInt()
