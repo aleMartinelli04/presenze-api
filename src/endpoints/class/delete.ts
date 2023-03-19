@@ -4,6 +4,7 @@ import {Request, Response} from "express";
 import {Class} from "@prisma/client";
 import {Message} from "../../types/errors.js";
 import prisma from "../../db/db.js";
+import {PrismaClientKnownRequestError} from "@prisma/client/runtime";
 
 export default class DeleteClassEndpoint extends Endpoint {
     readonly path = "/class/:id/delete";
@@ -26,12 +27,23 @@ export default class DeleteClassEndpoint extends Endpoint {
             return;
         }
 
-        const deletedClass = await prisma.class.delete({
-            where: {
-                id: id
-            }
-        });
+        try {
+            const deletedClass = await prisma.class.delete({
+                where: {
+                    id: id
+                }
+            });
 
-        await res.json(deletedClass);
+            await res.json(deletedClass);
+        } catch (err) {
+            const e = err as PrismaClientKnownRequestError;
+
+            if (e.code == "P2003") {
+                await res.status(500).json({message: "This class has associated students"});
+                return;
+            }
+
+            await res.status(500).json({message: "Class not deleted (unknown error)"});
+        }
     }
 }
