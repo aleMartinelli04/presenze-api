@@ -4,6 +4,7 @@ import {SchoolYear} from "@prisma/client";
 import {Request, Response} from "express";
 import {Message} from "../../types/errors.js";
 import prisma from "../../db/db.js";
+import {PrismaClientKnownRequestError} from "@prisma/client/runtime";
 
 export default class DeleteSchoolYearEndpoint extends Endpoint {
     readonly path: string = "/school-year/:start_year/delete";
@@ -25,12 +26,23 @@ export default class DeleteSchoolYearEndpoint extends Endpoint {
             return;
         }
 
-        await prisma.schoolYear.delete({
-            where: {
-                start_year: startYear
-            }
-        });
+        try {
+            await prisma.schoolYear.delete({
+                where: {
+                    start_year: startYear
+                }
+            });
 
-        await res.json(schoolYear);
+            await res.json(schoolYear);
+        } catch (err) {
+            const e = err as PrismaClientKnownRequestError;
+
+            if (e.code == "P2003") {
+                await res.status(500).json({message: "School year has associated classes"});
+                return;
+            }
+
+            await res.status(500).json({message: "School year not deleted (unknown error)"});
+        }
     }
 }
