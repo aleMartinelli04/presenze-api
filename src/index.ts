@@ -28,10 +28,10 @@ async function main() {
         }
     }
 
-    console.log("Registered " + registered + " endpoints!");
+    console.log("🥝 Registered " + registered + " endpoints!");
 
     server.listen(port, () => {
-        console.log("API listening on port " + port);
+        console.log("🦦 API listening on port " + port);
     });
 }
 
