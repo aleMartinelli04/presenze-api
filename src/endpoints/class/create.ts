@@ -1,39 +1,37 @@
 import {Endpoint} from "../endpoint.js";
-import {Request, Response} from "express";
-import {body} from "express-validator";
-import {Class, SchoolYear} from "@prisma/client";
-import {Message} from "../../types/errors.js";
+import e from "express";
 import prisma from "../../db/db.js";
+import {body} from "express-validator";
+import {getCurrentYear} from "../../utils/utils.js";
+import {errCodes} from "../../utils/err-codes.js";
 
-export default class CreateClassEndpoint extends Endpoint {
+export default class CreateClass extends Endpoint {
     readonly path = "/class/create";
+
     readonly validators = [
-        body("name").isString(),
-        body("start_year").isInt({min: 0})
+        body('name').isString(),
+        body('year').optional().isInt().default(getCurrentYear()),
     ];
 
-    protected async _post(req: Request, res: Response<Class | Message>): Promise<any> {
-        const name = req.body.name;
-        const start_year = parseInt(req.body.start_year);
+    protected async _post(req: e.Request, res: e.Response): Promise<any> {
+        const {name, year} = req.body;
 
-        const schoolYear: SchoolYear | null = await prisma.schoolYear.findUnique({
-            where: {
-                start_year: start_year
-            }
-        });
+        try {
+            const newClass = await prisma.class.create({
+                data: {
+                    name: name,
+                    school_year: {
+                        connect: {
+                            start_year: year
+                        }
+                    }
+                }
+            });
 
-        if (!schoolYear) {
-            await res.status(404).json({message: "School Year not found"});
-            return;
+            res.json(newClass);
+
+        } catch (e) {
+            res.status(404).json({err: errCodes.ERR_YEAR_NOT_FOUND});
         }
-
-        const createdClass = await prisma.class.create({
-            data: {
-                name: name,
-                school_year_id: start_year
-            }
-        });
-
-        await res.status(200).json(createdClass);
     }
 }
