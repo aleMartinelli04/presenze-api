@@ -29,7 +29,7 @@ export default class CreateCourse extends Endpoint {
                 }
             });
 
-            res.json(course);
+            await res.json(course);
 
         } catch (e: PrismaClientKnownRequestError | any) {
             if (e.code === 'P2025') {
@@ -37,7 +37,7 @@ export default class CreateCourse extends Endpoint {
                 return;
             }
 
-            await res.status(500).json({err: "ERR_UNKNOWN"});
+            await res.status(500).json({err: errCodes.ERR_UNKNOWN});
         }
     }
 }

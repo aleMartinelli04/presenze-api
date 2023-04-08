@@ -21,9 +21,10 @@ export default class Course extends Endpoint {
         });
 
         if (!course) {
-            return res.status(404).json({err: errCodes.ERR_COURSE_NOT_FOUND});
+            await res.status(404).json({err: errCodes.ERR_COURSE_NOT_FOUND});
+            return;
         }
 
-        res.json(course);
+        await res.json(course);
     }
 }

@@ -22,7 +22,7 @@ export default class DeleteCourse extends Endpoint {
                 }
             });
 
-            res.json(course);
+            await res.json(course);
 
         } catch (e: PrismaClientKnownRequestError | any) {
             if (e.code === 'P2025') {
