@@ -1,40 +1,43 @@
 import {Endpoint} from "../endpoint.js";
 import {body} from "express-validator";
-import {Request, Response} from "express";
 import prisma from "../../db/db.js";
-import {Course} from "@prisma/client";
-import {Message} from "../../types/errors.js";
+import {getCurrentYear} from "../../utils/utils.js";
+import e from "express";
+import {PrismaClientKnownRequestError} from "@prisma/client/runtime";
+import {errCodes} from "../../utils/err-codes.js";
 
-export default class CreateCourseEndpoint extends Endpoint {
+export default class CreateCourse extends Endpoint {
     readonly path = "/course/create";
 
     readonly validators = [
         body('name').isString(),
-        body('school_year').isInt()
+        body('year').optional().isInt().default(getCurrentYear())
     ];
 
-    protected async _post(req: Request, res: Response<Course | Message>) {
-        const name = req.body.name;
-        const schoolYear = parseInt(req.body.school_year);
+    protected async _post(req: e.Request, res: e.Response): Promise<any> {
+        const {name, year} = req.body;
 
-        const year = await prisma.schoolYear.findUnique({
-            where: {
-                start_year: schoolYear
+        try {
+            const course = await prisma.course.create({
+                data: {
+                    name: name,
+                    school_year: {
+                        connect: {
+                            start_year: year
+                        }
+                    }
+                }
+            });
+
+            res.json(course);
+
+        } catch (e: PrismaClientKnownRequestError | any) {
+            if (e.code === 'P2025') {
+                await res.status(400).json({err: errCodes.ERR_YEAR_NOT_FOUND});
+                return;
             }
-        });
 
-        if (!year) {
-            await res.status(404).json({message: "School year not found"});
-            return;
+            await res.status(500).json({err: "ERR_UNKNOWN"});
         }
-
-        const course = await prisma.course.create({
-            data: {
-                name: name,
-                school_year_id: schoolYear
-            }
-        });
-
-        await res.json(course);
     }
 }
