@@ -21,9 +21,10 @@ export default class Class extends Endpoint {
         });
 
         if (!c) {
-            return res.status(404).json({err: errCodes.ERR_CLASS_NOT_FOUND});
+            await res.status(404).json({err: errCodes.ERR_CLASS_NOT_FOUND});
+            return;
         }
 
-        res.json(c);
+        await res.json(c);
     }
 }

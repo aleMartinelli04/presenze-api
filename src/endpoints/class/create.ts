@@ -4,6 +4,7 @@ import prisma from "../../db/db.js";
 import {body} from "express-validator";
 import {getCurrentYear} from "../../utils/utils.js";
 import {errCodes} from "../../utils/err-codes.js";
+import {PrismaClientKnownRequestError} from "@prisma/client/runtime";
 
 export default class CreateClass extends Endpoint {
     readonly path = "/class/create";
@@ -28,10 +29,15 @@ export default class CreateClass extends Endpoint {
                 }
             });
 
-            res.json(newClass);
+            await res.json(newClass);
 
-        } catch (e) {
-            res.status(404).json({err: errCodes.ERR_YEAR_NOT_FOUND});
+        } catch (e: PrismaClientKnownRequestError | any) {
+            if (e.code === 'P2025') {
+                await res.status(404).json({err: errCodes.ERR_YEAR_NOT_FOUND});
+                return;
+            }
+
+            await res.status(500).json({err: errCodes.ERR_UNKNOWN});
         }
     }
 }

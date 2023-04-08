@@ -3,6 +3,7 @@ import {param} from "express-validator";
 import e from "express";
 import prisma from "../../../db/db.js";
 import {errCodes} from "../../../utils/err-codes.js";
+import {PrismaClientKnownRequestError} from "@prisma/client/runtime";
 
 export default class StudentsForClass extends Endpoint {
     readonly path = "/class/:id/students";
@@ -24,8 +25,14 @@ export default class StudentsForClass extends Endpoint {
             });
 
             res.json(students);
-        } catch (e) {
-            res.status(404).json({err: errCodes.ERR_CLASS_NOT_FOUND});
+
+        } catch (e: PrismaClientKnownRequestError | any) {
+            if (e.code == 'P2025') {
+                await res.status(404).json({err: errCodes.ERR_CLASS_NOT_FOUND});
+                return;
+            }
+
+            await res.status(500).json({err: errCodes.ERR_UNKNOWN});
         }
     }
 }
