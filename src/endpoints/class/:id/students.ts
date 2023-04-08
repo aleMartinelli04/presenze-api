@@ -16,11 +16,20 @@ export default class StudentsForClass extends Endpoint {
         const id = parseInt(req.params.id);
 
         try {
+            const c = await prisma.class.findUnique({
+                where: {
+                    id: id
+                }
+            });
+
+            if (!c) {
+                await res.status(404).json({err: errCodes.ERR_CLASS_NOT_FOUND});
+                return;
+            }
+
             const students = await prisma.student.findMany({
                 where: {
-                    class: {
-                        id: id
-                    }
+                    class: c
                 }
             });
 

@@ -31,7 +31,7 @@ export default class DeleteClass extends Endpoint {
             }
 
             if (e.code === 'P2003') {
-                await res.status(500).json({err: errCodes.ERR_COURSE_HAS_STUDENTS});
+                await res.status(500).json({err: errCodes.ERR_CLASS_HAS_STUDENTS});
                 return;
             }
 

@@ -11,7 +11,7 @@ export default class CreateClass extends Endpoint {
 
     readonly validators = [
         body('name').isString(),
-        body('year').optional().isInt().default(getCurrentYear()),
+        body('year').optional().isInt(),
     ];
 
     protected async _post(req: e.Request, res: e.Response): Promise<any> {
@@ -23,7 +23,7 @@ export default class CreateClass extends Endpoint {
                     name: name,
                     school_year: {
                         connect: {
-                            start_year: year
+                            start_year: year ?? getCurrentYear()
                         }
                     }
                 }

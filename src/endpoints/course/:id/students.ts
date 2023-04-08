@@ -16,6 +16,17 @@ export default class StudentsForCourse extends Endpoint {
         const id = parseInt(req.params.id);
 
         try {
+            const course = await prisma.course.findUnique({
+                where: {
+                    id: id
+                }
+            });
+
+            if (!course) {
+                await res.status(400).json({err: errCodes.ERR_COURSE_NOT_FOUND});
+                return;
+            }
+
             const students = await prisma.student.findMany({
                 where: {
                     inscriptions: {
@@ -29,11 +40,6 @@ export default class StudentsForCourse extends Endpoint {
             await res.json(students);
 
         } catch (e: PrismaClientKnownRequestError | any) {
-            if (e.code === 'P2025') {
-                await res.status(400).json({err: errCodes.ERR_COURSE_NOT_FOUND});
-                return;
-            }
-
             await res.status(500).json({err: errCodes.ERR_UNKNOWN});
         }
     }

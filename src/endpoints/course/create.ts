@@ -1,17 +1,17 @@
 import {Endpoint} from "../endpoint.js";
 import {body} from "express-validator";
 import prisma from "../../db/db.js";
-import {getCurrentYear} from "../../utils/utils.js";
 import e from "express";
 import {PrismaClientKnownRequestError} from "@prisma/client/runtime";
 import {errCodes} from "../../utils/err-codes.js";
+import {getCurrentYear} from "../../utils/utils.js";
 
 export default class CreateCourse extends Endpoint {
     readonly path = "/course/create";
 
     readonly validators = [
         body('name').isString(),
-        body('year').optional().isInt().default(getCurrentYear())
+        body('year').optional().isInt()
     ];
 
     protected async _post(req: e.Request, res: e.Response): Promise<any> {
@@ -23,7 +23,7 @@ export default class CreateCourse extends Endpoint {
                     name: name,
                     school_year: {
                         connect: {
-                            start_year: year
+                            start_year: year ?? getCurrentYear()
                         }
                     }
                 }

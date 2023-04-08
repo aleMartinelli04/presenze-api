@@ -30,6 +30,11 @@ export default class DeleteCourse extends Endpoint {
                 return;
             }
 
+            if (e.code === 'P2003') {
+                await res.status(400).json({err: errCodes.ERR_COURSE_HAS_STUDENTS});
+                return;
+            }
+
             await res.status(500).json({err: errCodes.ERR_UNKNOWN});
         }
     }
