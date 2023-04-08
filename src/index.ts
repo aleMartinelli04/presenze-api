@@ -2,12 +2,16 @@ import express from "express";
 import {fileURLToPath} from "url";
 import {dirname, join} from "path";
 import {glob} from "glob";
+import cors from "cors";
 
 const port = 3000;
 
 const server = express();
 
 server.use(express.json());
+server.use(cors({
+    origin: '*'
+}));
 
 async function main() {
     const path = join(dirname(fileURLToPath(import.meta.url)), "endpoints");
