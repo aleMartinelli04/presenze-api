@@ -24,7 +24,7 @@ export default class StudentsForClass extends Endpoint {
                 }
             });
 
-            res.json(students);
+            await res.json(students);
 
         } catch (e: PrismaClientKnownRequestError | any) {
             if (e.code == 'P2025') {
