@@ -34,6 +34,9 @@ export default class StudentsForCourse extends Endpoint {
                             course_id: id
                         }
                     }
+                },
+                include: {
+                    class: true
                 }
             });
 
