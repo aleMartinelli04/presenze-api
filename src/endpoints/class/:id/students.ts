@@ -30,6 +30,9 @@ export default class StudentsForClass extends Endpoint {
             const students = await prisma.student.findMany({
                 where: {
                     class: c
+                },
+                include: {
+                    class: true
                 }
             });
 

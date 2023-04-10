@@ -38,6 +38,8 @@ export default class CreateStudent extends Endpoint {
                 return;
             }
 
+            console.error(e);
+
             await res.status(500).json({err: errCodes.ERR_UNKNOWN});
         }
     }
