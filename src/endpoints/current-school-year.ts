@@ -18,6 +18,7 @@ export default class CurrentSchoolYear extends Endpoint {
 
         if (!currentSchoolYear) {
             await res.status(404).json({err: errCodes.ERR_YEAR_NOT_FOUND});
+            return;
         }
 
         await res.json(currentSchoolYear);

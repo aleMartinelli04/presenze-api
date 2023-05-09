@@ -8,11 +8,13 @@ services:
     container_name: "presenze-api"
     build: .
     ports:
-      - "3000:3000"
+      - "4040:4040"
     depends_on:
       - db
     volumes:
       - ./:/usr/src/app
+    restart: always
+
   db:
     container_name: "presenze-postgres"
     image: postgres

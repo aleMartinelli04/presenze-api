@@ -4,7 +4,7 @@ import {dirname, join} from "path";
 import {glob} from "glob";
 import cors from "cors";
 
-const port = 3000;
+const port = 4040;
 
 const server = express();
 

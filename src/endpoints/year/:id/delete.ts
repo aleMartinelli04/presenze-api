@@ -1,39 +1,35 @@
 import {Endpoint} from "../../endpoint.js";
 import {param} from "express-validator";
-import e from "express";
 import prisma from "../../../db/db.js";
+import e from "express";
+import {PrismaClientKnownRequestError} from "@prisma/client/runtime/index.js";
 import {errCodes} from "../../../utils/err-codes.js";
-import {PrismaClientKnownRequestError} from "@prisma/client/runtime";
 
-export default class CoursesForYear extends Endpoint {
-    readonly path = "/year/:id/courses";
+export default class DeleteStudent extends Endpoint {
+    readonly path = "/year/:id/delete";
 
     readonly validators = [
         param('id').isInt()
     ];
 
-    protected async _get(req: e.Request, res: e.Response): Promise<any> {
+    protected async _delete(req: e.Request, res: e.Response): Promise<any> {
         const id = parseInt(req.params.id);
 
         try {
-            const courses = await prisma.schoolYear.findUnique({
+            const year = await prisma.schoolYear.delete({
                 where: {
                     start_year: id
                 }
-            }).courses({
-                orderBy: {
-                    name: "asc"
-                }
             });
 
-            if (courses === null) {
+            await res.json(year);
+
+        } catch (e: PrismaClientKnownRequestError | any) {
+            if (e.code === 'P2025') {
                 await res.status(404).json({err: errCodes.ERR_YEAR_NOT_FOUND});
                 return;
             }
 
-            await res.json(courses);
-
-        } catch (e: PrismaClientKnownRequestError | any) {
             await res.status(500).json({err: errCodes.ERR_UNKNOWN});
         }
     }

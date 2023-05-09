@@ -20,7 +20,11 @@ export default class ClassesForYear extends Endpoint {
                 where: {
                     start_year: id
                 }
-            }).classes();
+            }).classes({
+                orderBy: {
+                    name: "asc"
+                }
+            });
 
             if (classes === null) {
                 await res.status(404).json({err: errCodes.ERR_YEAR_NOT_FOUND});
